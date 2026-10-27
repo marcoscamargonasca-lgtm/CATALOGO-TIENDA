@@ -92,10 +92,10 @@ input,textarea,select,button{font:inherit;border-radius:10px;padding:11px 12px;b
   <div id="cartItems"><p class="small">Tu carrito está vacío. Agrega productos del catálogo.</p></div>
   <div class="cart-total" id="cartTotal">Total referencial: S/ 0.00</div>
   <div class="cart-actions">
-    <button type="button" class="gold" id="sendOrderBtn">Enviar pedido por WhatsApp</button>
+    <button type="button" class="gold" id="sendOrderBtn">Enviar boleta por imagen a WhatsApp</button>
     <button type="button" class="secondary" id="clearCartBtn">Vaciar carrito</button>
   </div>
-  <p class="small">El pedido se enviará como mensaje a WhatsApp para confirmar disponibilidad, precio final y entrega. No se realiza el pago en esta página.</p>
+  <p class="small">Se generará una imagen del resumen del pedido. En móviles compatibles podrás compartirla directamente por WhatsApp; en otros equipos se descargará la imagen para adjuntarla en WhatsApp. Es un resumen referencial, no una boleta tributaria.</p>
 </section>
 
 <section class="section">
@@ -195,19 +195,79 @@ function renderCart(){
  $("sendOrderBtn").disabled=false; $("clearCartBtn").disabled=false;
  $("cartItems").innerHTML=items.map(p=>`<div class="cart-line">
    <div><strong>${escapeHtml(p.nombre)}</strong><small>${money(p.precio)} por unidad${p.codigo?" · Código: "+escapeHtml(p.codigo):""}</small><div class="line-total"><strong>Subtotal: ${money((Number(p.precio)||0)*(Number(p.cantidad)||0))}</strong></div></div>
-   <div class="cart-qty"><button type="button" class="secondary" aria-label="Disminuir cantidad" onclick="changeCartQty(${JSON.stringify(String(p.id))},-1)">−</button><span>${Number(p.cantidad)||0}</span><button type="button" aria-label="Aumentar cantidad" onclick="changeCartQty(${JSON.stringify(String(p.id))},1)">+</button></div>
-   <button type="button" class="secondary" onclick="removeCartItem(${JSON.stringify(String(p.id))})">Quitar</button>
+   <div class="cart-qty"><button type="button" class="secondary" aria-label="Disminuir cantidad" data-cart-action="minus" data-cart-id="${escapeHtml(String(p.id))}">−</button><span>${Number(p.cantidad)||0}</span><button type="button" aria-label="Aumentar cantidad" data-cart-action="plus" data-cart-id="${escapeHtml(String(p.id))}">+</button></div>
+   <button type="button" class="secondary" data-cart-action="remove" data-cart-id="${escapeHtml(String(p.id))}">Quitar</button>
  </div>`).join("");
+ $("cartItems").querySelectorAll("[data-cart-action]").forEach(btn=>{
+   btn.addEventListener("click",()=>{
+     const id=btn.dataset.cartId, action=btn.dataset.cartAction;
+     if(action==="remove") removeCartItem(id);
+     else if(action==="minus") changeCartQty(id,-1);
+     else if(action==="plus") changeCartQty(id,1);
+   });
+ });
 }
-function sendCartOrder(){
+function drawReceiptCanvas(items){
+ const width=760, rowHeight=76, top=300, bottom=150;
+ const height=top + items.length*rowHeight + bottom;
+ const canvas=document.createElement("canvas");
+ canvas.width=width; canvas.height=height;
+ const ctx=canvas.getContext("2d");
+ ctx.fillStyle="#f3f4f6";ctx.fillRect(0,0,width,height);
+ ctx.fillStyle="#ffffff";ctx.fillRect(28,28,width-56,height-56);
+ ctx.fillStyle="#111827";ctx.fillRect(28,28,width-56,170);
+ ctx.fillStyle="#d5a642";ctx.fillRect(28,192,width-56,6);
+ ctx.textAlign="center";
+ ctx.fillStyle="#ffffff";ctx.font="bold 38px Arial";ctx.fillText("MC IMPORTACIONES",width/2,92);
+ ctx.font="bold 25px Arial";ctx.fillText("RESUMEN DE PEDIDO",width/2,139);
+ ctx.fillStyle="#d1d5db";ctx.font="18px Arial";ctx.fillText("Pedido referencial · No es comprobante tributario",width/2,172);
+ ctx.textAlign="left";
+ ctx.fillStyle="#111827";ctx.font="bold 19px Arial";
+ ctx.fillText("PRODUCTO",58,245);ctx.fillText("CANT.",430,245);ctx.fillText("PRECIO",500,245);ctx.fillText("SUBTOTAL",610,245);
+ let y=top;
+ items.forEach((p,index)=>{
+   if(index%2===0){ctx.fillStyle="#f9fafb";ctx.fillRect(48,y-30,width-96,rowHeight);}
+   ctx.fillStyle="#111827";ctx.font="bold 17px Arial";
+   let name=String(p.nombre||"Producto");
+   if(name.length>29) name=name.slice(0,26)+"...";
+   ctx.fillText(name,58,y);
+   ctx.font="16px Arial";ctx.fillStyle="#4b5563";
+   const code=p.codigo?("Código: "+String(p.codigo)).slice(0,30):"";
+   if(code)ctx.fillText(code,58,y+23);
+   ctx.fillStyle="#111827";ctx.font="17px Arial";
+   ctx.fillText(String(Number(p.cantidad)||0),438,y);
+   ctx.fillText(money(p.precio),500,y);
+   ctx.font="bold 17px Arial";ctx.fillText(money((Number(p.precio)||0)*(Number(p.cantidad)||0)),610,y);
+   y+=rowHeight;
+ });
+ ctx.strokeStyle="#d1d5db";ctx.beginPath();ctx.moveTo(48,y-24);ctx.lineTo(width-48,y-24);ctx.stroke();
+ ctx.fillStyle="#111827";ctx.font="bold 25px Arial";ctx.fillText("TOTAL REFERENCIAL",58,y+25);
+ ctx.textAlign="right";ctx.fillStyle="#9a6700";ctx.font="bold 31px Arial";ctx.fillText(money(cartSum()),width-58,y+28);
+ ctx.textAlign="center";ctx.fillStyle="#4b5563";ctx.font="17px Arial";
+ ctx.fillText("Por favor, confirmar stock, precio final y entrega por WhatsApp.",width/2,y+78);
+ ctx.font="15px Arial";ctx.fillText("MC Importaciones · Gracias por tu preferencia",width/2,y+105);
+ return canvas;
+}
+async function sendCartOrder(){
  const items=Object.values(cart).filter(p=>Number(p.cantidad)>0);
  if(!items.length){alert("Agrega al menos un producto al carrito.");return;}
- const lines=items.map((p,i)=>(i+1)+". "+p.nombre+" | Cantidad: "+p.cantidad+" | Precio unitario: "+money(p.precio)+" | Subtotal: "+money(p.precio*p.cantidad));
- const msg="Hola, MC Importaciones. Quiero realizar el siguiente pedido:\\n\\n"+lines.join("\\n")+"\\n\\nTOTAL REFERENCIAL: "+money(cartSum())+"\\n\\nPor favor, confirmen disponibilidad, precio final y forma de entrega.";
- const url="https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg);
+ const canvas=drawReceiptCanvas(items);
+ const fileName="Pedido_MC_Importaciones.png";
+ const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png"));
+ if(!blob){alert("No se pudo generar la imagen. Intenta nuevamente.");return;}
+ const file=new File([blob],fileName,{type:"image/png"});
+ const textMsg="Hola, MC Importaciones. Te envío la imagen con mi pedido para confirmar disponibilidad, precio final y entrega.";
+ if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+   try{await navigator.share({files:[file],title:"Pedido MC Importaciones",text:textMsg});return;}
+   catch(err){if(err && err.name==="AbortError")return;}
+ }
+ const objectUrl=URL.createObjectURL(blob);
+ const a=document.createElement("a");a.href=objectUrl;a.download=fileName;document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(objectUrl),60000);
+ const url="https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(textMsg+" Adjuntaré la imagen del pedido.");
  window.open(url,"_blank","noopener");
+ alert("Se descargó la imagen del pedido. En WhatsApp, adjunta el archivo Pedido_MC_Importaciones.png antes de enviar el mensaje.");
 }
-
 function render(){
  const term=$("search").value.trim().toLowerCase(), cat=$("category").value;
  const filtered=products.filter(p=>(p.nombre+" "+(p.descripcion||"")+" "+(p.codigo||"")).toLowerCase().includes(term)&&(!cat||p.categoria===cat));
