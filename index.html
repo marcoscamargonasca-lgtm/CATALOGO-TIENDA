@@ -1,113 +1,125 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#101827">
 <title>MC Importaciones | Catálogo</title>
 <style>
-:root{--bg:#f4f6f9;--ink:#172033;--muted:#667085;--navy:#101827;--gold:#e8b44c;--line:#e5e9f0;--white:#fff;--green:#168451}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-header{background:linear-gradient(120deg,#101827,#25364e);color:#fff;padding:24px max(18px,calc((100% - 1180px)/2));}
-.top{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border:2px solid var(--gold);border-radius:12px;display:grid;place-items:center;font-weight:900;color:var(--gold);font-size:17px}.brand h1{font-size:22px;margin:0}.brand p{margin:4px 0 0;color:#cbd5e1;font-size:13px}.actions{display:flex;gap:8px;flex-wrap:wrap}
-button,.button{border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer;font-size:14px}.primary{background:var(--gold);color:#182033}.light{background:#fff;color:#182033}.outline{border:1px solid #526176;background:transparent;color:#fff}.danger{background:#ffe4e4;color:#a11}
-.hero{max-width:1180px;margin:26px auto 0;padding:0 18px 20px}.hero h2{font-size:clamp(26px,4vw,42px);line-height:1.08;margin:0 0 10px;max-width:680px}.hero p{color:#d7deea;margin:0;max-width:650px;line-height:1.6}
-main{max-width:1180px;margin:auto;padding:24px 18px 60px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}.toolbar input,.toolbar select{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:15px;min-width:180px}.toolbar input{flex:1;min-width:220px}.status{font-size:13px;color:var(--muted);margin:0 0 16px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}.product{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 4px 18px #17203308;display:flex;flex-direction:column}.photo{height:190px;background:#eef1f5;display:grid;place-items:center;overflow:hidden;color:#98a2b3;font-size:13px}.photo img{width:100%;height:100%;object-fit:cover}.product-body{padding:15px;display:flex;flex-direction:column;gap:8px;flex:1}.category{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7b8494;font-weight:800}.product h3{margin:0;font-size:17px}.description{font-size:13px;line-height:1.45;color:var(--muted);min-height:36px}.price{font-size:23px;font-weight:850;color:#172033;margin-top:auto}.stock{font-size:12px;color:var(--green)}.card-actions{display:flex;gap:8px;margin-top:7px}.card-actions button{flex:1;padding:10px 8px}.whatsapp{background:#168451;color:white}.empty{background:white;padding:35px;border-radius:15px;text-align:center;color:var(--muted);grid-column:1/-1}.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:28px 0 15px}.section-title h2{margin:0;font-size:22px}
-footer{padding:25px;text-align:center;color:var(--muted);font-size:12px}
-.modal-backdrop{position:fixed;inset:0;background:#0b1220a8;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}.modal-backdrop.open{display:flex}.modal{background:white;border-radius:18px;padding:22px;width:min(650px,100%);max-height:92vh;overflow:auto}.modal h2{margin:0 0 16px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:800;color:#475467}.field input,.field textarea,.field select{width:100%;border:1px solid #d8dee8;border-radius:9px;padding:11px;font:inherit}.field textarea{min-height:70px;resize:vertical}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;flex-wrap:wrap}.admin-panel{display:none;margin:0 0 22px;padding:18px;background:white;border:1px solid var(--line);border-radius:15px}.admin-panel.show{display:block}.admin-panel p{color:var(--muted);font-size:13px}.admin-row{display:flex;gap:8px;flex-wrap:wrap}.admin-row button{margin-top:6px}.hidden{display:none!important}.qr-box{display:flex;align-items:center;gap:15px;flex-wrap:wrap;margin-top:12px}.qr-box canvas,.qr-box img{width:140px;height:140px;border:1px solid var(--line);padding:6px;border-radius:10px}.note{font-size:12px;color:var(--muted);line-height:1.5}
-@media(max-width:560px){header{padding:18px}.hero{margin-top:22px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.brand h1{font-size:19px}.photo{height:175px}}
+:root{--ink:#17212b;--muted:#64748b;--gold:#d5a642;--bg:#f4f6f8;--card:#fff;--line:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+header{background:#111827;color:white;padding:26px 18px;text-align:center;border-bottom:4px solid var(--gold)}
+header h1{margin:0;font-size:clamp(24px,4vw,36px);letter-spacing:1px}header p{margin:8px 0 0;color:#d1d5db}
+main{max-width:1120px;margin:24px auto;padding:0 16px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+input,textarea,select,button{font:inherit;border-radius:10px;padding:11px 12px;border:1px solid #cbd5e1}input,textarea,select{background:white;min-width:0}button{cursor:pointer;border:0;background:#17212b;color:white;font-weight:700}button.secondary{background:#e2e8f0;color:#17212b}button.gold{background:var(--gold);color:#111827}.toolbar input{flex:1;min-width:180px}
+.status{padding:12px 14px;border-radius:10px;background:#fff7df;color:#6b4e0b;margin:12px 0}.status.ok{background:#dcfce7;color:#166534}.status.err{background:#fee2e2;color:#991b1b}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}.product{background:white;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 4px 16px #0f172a0b;display:flex;flex-direction:column}.product img{width:100%;height:190px;object-fit:cover;background:#e2e8f0}.product .body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}.product h3{margin:0;font-size:18px}.desc{color:var(--muted);font-size:14px;min-height:18px}.price{font-size:22px;font-weight:800;color:#876214}.tag{font-size:12px;color:#475569;background:#f1f5f9;border-radius:99px;padding:5px 9px;align-self:flex-start}.product button{margin-top:auto}.section{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;margin:22px 0}.section h2{margin:0 0 14px}.hidden{display:none!important}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.formgrid .wide{grid-column:1/-1}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.small{font-size:13px;color:var(--muted)}.adminlist{display:grid;gap:8px}.adminitem{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;border:1px solid var(--line);border-radius:10px}.adminitem span{overflow-wrap:anywhere}.adminitem .row{flex-shrink:0}footer{text-align:center;padding:30px;color:var(--muted);font-size:13px}
+@media(max-width:560px){.formgrid{grid-template-columns:1fr}.formgrid .wide{grid-column:auto}.adminitem{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
 <body>
-<header>
-  <div class="top">
-    <div class="brand"><div class="logo">MC</div><div><h1>MC Importaciones</h1><p>Catálogo de productos</p></div></div>
-    <div class="actions"><button class="light" id="shareBtn">Compartir catálogo</button><button class="outline" id="adminBtn">Administrar</button></div>
-  </div>
-  <div class="hero"><h2>Encuentra lo que necesitas.</h2><p>Explora nuestros productos, consulta los precios y escríbenos por WhatsApp para confirmar disponibilidad y realizar tu pedido.</p></div>
-</header>
+<header><h1>MC IMPORTACIONES</h1><p>Catálogo de productos · Consulta nuestros precios</p></header>
 <main>
-  <section class="admin-panel" id="adminPanel">
-    <div class="section-title"><h2>Administración de productos</h2><button class="primary" id="addBtn">＋ Agregar producto</button></div>
-    <p id="adminMessage">Gestiona el catálogo. Los cambios se guardan en este navegador en esta versión inicial.</p>
-    <div class="admin-row"><button class="light" id="exportBtn">Exportar productos (JSON)</button><button class="light" id="importBtn">Importar productos</button><button class="light" id="qrBtn">Mostrar QR del catálogo</button><button class="danger" id="logoutBtn">Cerrar administración</button><input type="file" id="importFile" accept=".json,application/json" class="hidden"></div>
-    <div class="qr-box hidden" id="qrArea"><div id="qrcode"></div><div><b>QR público del catálogo</b><p class="note">Descarga o imprime este QR para que tus clientes abran el catálogo. Publica primero la página para que el enlace sea accesible.</p><button class="light" id="downloadQrBtn">Descargar QR</button></div></div>
-  </section>
-  <div class="toolbar">
-    <input id="search" placeholder="Buscar productos..." aria-label="Buscar productos">
-    <select id="category"><option value="">Todas las categorías</option></select>
-    <select id="sort"><option value="featured">Ordenar: recomendados</option><option value="low">Precio: menor a mayor</option><option value="high">Precio: mayor a menor</option><option value="az">Nombre: A-Z</option></select>
-  </div>
-  <p class="status" id="status">Cargando catálogo…</p>
-  <div class="grid" id="products"></div>
-</main>
-<footer>© <span id="year"></span> MC Importaciones · Precios y disponibilidad sujetos a confirmación.</footer>
+<div class="toolbar">
+  <input id="search" placeholder="Buscar producto..." aria-label="Buscar producto">
+  <select id="category"><option value="">Todas las categorías</option></select>
+  <button class="gold" id="shareBtn">Compartir catálogo</button>
+</div>
+<div id="notice" class="status">Conectando con el catálogo en línea…</div>
+<div id="products" class="grid"></div>
 
-<div class="modal-backdrop" id="productModal"><div class="modal">
-  <h2 id="modalTitle">Agregar producto</h2>
-  <form id="productForm"><input type="hidden" id="productId">
-    <div class="form-grid">
-      <div class="field"><label for="name">Nombre del producto *</label><input id="name" required maxlength="100"></div>
-      <div class="field"><label for="price">Precio (S/) *</label><input id="price" type="number" min="0" step="0.01" required></div>
-      <div class="field"><label for="categoryInput">Categoría</label><input id="categoryInput" placeholder="Ej. Hogar, tecnología"></div>
-      <div class="field"><label for="stockInput">Disponibilidad / stock</label><input id="stockInput" placeholder="Ej. Disponible"></div>
-      <div class="field full"><label for="imageInput">Enlace de imagen (URL)</label><input id="imageInput" type="url" placeholder="https://..."></div>
-      <div class="field full"><label for="descriptionInput">Descripción</label><textarea id="descriptionInput" maxlength="500" placeholder="Características, tamaño, marca, etc."></textarea></div>
-    </div>
-    <p class="note">Usa enlaces públicos de imágenes. No subas fotos privadas ni datos sensibles.</p>
-    <div class="modal-actions"><button type="button" class="light" id="cancelModal">Cancelar</button><button type="submit" class="primary">Guardar producto</button></div>
-  </form>
-</div></div>
-<div class="modal-backdrop" id="loginModal"><div class="modal" style="max-width:400px">
-  <h2>Acceso de administración</h2><p class="note">Ingresa la clave local que configuraste en este archivo.</p>
-  <form id="loginForm"><div class="field"><label for="password">Contraseña de administrador</label><input id="password" type="password" required autocomplete="current-password"></div><div class="modal-actions"><button type="button" class="light" id="cancelLogin">Cancelar</button><button type="submit" class="primary">Ingresar</button></div></form>
-  <p class="note">Importante: en un sitio público, una contraseña guardada en JavaScript no protege los datos de forma segura. Para administración privada real y sincronización entre dispositivos, conecta una base de datos y autenticación de servidor.</p>
-</div></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<section class="section">
+  <h2>Acceso de administración</h2>
+  <p class="small">Solo el propietario debe iniciar sesión. No compartas tu contraseña.</p>
+  <div id="loginPanel">
+    <form id="loginForm" class="formgrid">
+      <input class="wide" id="email" type="email" autocomplete="username" placeholder="Correo del administrador" required>
+      <input class="wide" id="password" type="password" autocomplete="current-password" placeholder="Contraseña" required>
+      <button class="wide" type="submit">Iniciar sesión</button>
+    </form>
+  </div>
+  <div id="adminPanel" class="hidden">
+    <div class="row" style="justify-content:space-between;margin-bottom:14px"><strong>Administrar productos</strong><button class="secondary" id="logoutBtn">Cerrar sesión</button></div>
+    <form id="productForm" class="formgrid">
+      <input id="pid" type="hidden">
+      <input id="pname" placeholder="Nombre del producto" required>
+      <input id="pprice" type="number" min="0" step="0.01" placeholder="Precio (S/)" required>
+      <input id="pcategory" placeholder="Categoría">
+      <input id="pcode" placeholder="Código/SKU (opcional)">
+      <input class="wide" id="pimage" type="url" placeholder="URL de imagen (https://...)">
+      <textarea class="wide" id="pdesc" rows="2" placeholder="Descripción breve"></textarea>
+      <label class="wide small"><input id="pavailable" type="checkbox" checked> Producto disponible</label>
+      <div class="wide row"><button type="submit" class="gold">Guardar producto</button><button type="button" id="cancelEdit" class="secondary">Limpiar formulario</button></div>
+    </form>
+    <h3>Productos registrados</h3><div id="adminList" class="adminlist"></div>
+  </div>
+</section>
+</main>
+<footer>MC Importaciones · Catálogo en línea</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* CONFIGURACIÓN RÁPIDA: cambia estos valores antes de publicar. */
-const ADMIN_PASSWORD = "CAMBIA-ESTA-CLAVE";
-const WHATSAPP_NUMBER = "51901148187"; // Perú: 51 + número, sin + ni espacios
-const STORAGE_KEY = "mc_importaciones_catalog_v1";
-const sampleProducts = [
- {id:"demo1",name:"Mesa plegable",price:88,category:"Hogar",stock:"Consultar disponibilidad",image:"",description:"Mesa plegable práctica para el hogar, negocio o eventos."},
- {id:"demo2",name:"Batería portátil",price:0,category:"Tecnología",stock:"Consultar disponibilidad",image:"",description:"Consulta modelos, capacidad y precio por WhatsApp."},
- {id:"demo3",name:"Cargador para celular",price:0,category:"Tecnología",stock:"Consultar disponibilidad",image:"",description:"Consulta compatibilidad y disponibilidad antes de comprar."}
-];
-let products = loadProducts();
-let isAdmin = false;
+const SUPABASE_URL = "https://yypkkpofusxlztscyeea.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable__EaNAszeReluH4DMQzzNUA_z3nmpKe_";
+const WHATSAPP_NUMBER = "51901148187"; // Cambia si deseas usar otro número, con código de país y sin +
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+let products = [];
 const $ = id => document.getElementById(id);
-function loadProducts(){try{const data=localStorage.getItem(STORAGE_KEY);return data?JSON.parse(data):sampleProducts.slice()}catch(e){return sampleProducts.slice()}}
-function saveProducts(){localStorage.setItem(STORAGE_KEY,JSON.stringify(products))}
-function money(n){return Number(n)>0?'S/ '+Number(n).toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2}):'Consultar precio'}
-function escapeHtml(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function waLink(p){const msg=`Hola, deseo consultar por: ${p.name}${Number(p.price)>0?' - '+money(p.price):''}. ¿Tiene disponibilidad?`;return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`}
+function notice(message, type=""){ $("notice").textContent=message; $("notice").className="status "+type; }
+function money(n){return "S/ "+Number(n||0).toFixed(2);}
+function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function waLink(p){return "https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent("Hola, deseo consultar por: "+p.nombre+" - "+money(p.precio)+(p.codigo?" (Código: "+p.codigo+")":""));}
 function render(){
- const q=$('search').value.trim().toLowerCase(), cat=$('category').value, sort=$('sort').value;
- let list=products.filter(p=>(!q||[p.name,p.category,p.description].join(' ').toLowerCase().includes(q))&&(!cat||p.category===cat));
- if(sort==='low')list.sort((a,b)=>a.price-b.price);if(sort==='high')list.sort((a,b)=>b.price-a.price);if(sort==='az')list.sort((a,b)=>a.name.localeCompare(b.name,'es'));
- const cats=[...new Set(products.map(p=>p.category).filter(Boolean))].sort();
- const old=$('category').value;$('category').innerHTML='<option value="">Todas las categorías</option>'+cats.map(c=>`<option>${escapeHtml(c)}</option>`).join('');$('category').value=cats.includes(old)?old:'';
- $('status').textContent=`${list.length} producto${list.length===1?'':'s'} en el catálogo`;
- $('products').innerHTML=list.length?list.map(p=>`<article class="product">
- <div class="photo">${p.image?`<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.parentElement.textContent='Imagen no disponible'">`:'Imagen del producto'}</div>
- <div class="product-body"><div class="category">${escapeHtml(p.category||'General')}</div><h3>${escapeHtml(p.name)}</h3><div class="description">${escapeHtml(p.description||'Consulta más detalles por WhatsApp.')}</div><div class="price">${money(p.price)}</div><div class="stock">${escapeHtml(p.stock||'Consultar disponibilidad')}</div><div class="card-actions"><a class="button whatsapp" style="text-decoration:none;text-align:center" target="_blank" rel="noopener" href="${waLink(p)}">Consultar</a>${isAdmin?`<button class="light" onclick="editProduct('${p.id}')">Editar</button><button class="danger" onclick="deleteProduct('${p.id}')">Borrar</button>`:''}</div></div></article>`).join(''):'<div class="empty">No se encontraron productos. Prueba otra búsqueda.</div>';
+ const term=$("search").value.trim().toLowerCase(), cat=$("category").value;
+ const filtered=products.filter(p=>(p.nombre+" "+(p.descripcion||"")+" "+(p.codigo||"")).toLowerCase().includes(term)&&(!cat||p.categoria===cat));
+ $("products").innerHTML=filtered.length?filtered.map(p=>`<article class="product">
+ <img src="${escapeHtml(p.imagen_url||"https://placehold.co/600x400?text=MC+Importaciones")}" alt="${escapeHtml(p.nombre)}" loading="lazy" onerror="this.src='https://placehold.co/600x400?text=Producto'">
+ <div class="body"><span class="tag">${escapeHtml(p.categoria||"General")}</span><h3>${escapeHtml(p.nombre)}</h3><div class="desc">${escapeHtml(p.descripcion||"")}</div><div class="price">${money(p.precio)}</div><a href="${waLink(p)}" target="_blank" rel="noopener"><button style="width:100%">Consultar por WhatsApp</button></a></div></article>`).join(""):`<p>No hay productos que coincidan con tu búsqueda.</p>`;
+ const cats=[...new Set(products.map(p=>p.categoria||"General"))].sort();
+ const old=$("category").value;
+ $("category").innerHTML='<option value="">Todas las categorías</option>'+cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+ if(cats.includes(old)) $("category").value=old;
+ renderAdminList();
 }
-function openProduct(p){$('productId').value=p?.id||'';$('name').value=p?.name||'';$('price').value=p?.price??'';$('categoryInput').value=p?.category||'';$('stockInput').value=p?.stock||'';$('imageInput').value=p?.image||'';$('descriptionInput').value=p?.description||'';$('modalTitle').textContent=p?'Editar producto':'Agregar producto';$('productModal').classList.add('open')}
-function editProduct(id){const p=products.find(x=>x.id===id);if(p)openProduct(p)}
-function deleteProduct(id){const p=products.find(x=>x.id===id);if(p&&confirm(`¿Borrar "${p.name}" del catálogo?`)){products=products.filter(x=>x.id!==id);saveProducts();render()}}
-$('productForm').addEventListener('submit',e=>{e.preventDefault();if(!isAdmin)return;const id=$('productId').value||('p'+Date.now());const p={id,name:$('name').value.trim(),price:Number($('price').value),category:$('categoryInput').value.trim(),stock:$('stockInput').value.trim()||'Consultar disponibilidad',image:$('imageInput').value.trim(),description:$('descriptionInput').value.trim()};const idx=products.findIndex(x=>x.id===id);if(idx>=0)products[idx]=p;else products.unshift(p);saveProducts();$('productModal').classList.remove('open');render()});
-$('adminBtn').onclick=()=>{if(isAdmin){$('adminPanel').classList.toggle('show')}else{$('loginModal').classList.add('open');$('password').focus()}};
-$('loginForm').addEventListener('submit',e=>{e.preventDefault();if($('password').value===ADMIN_PASSWORD){isAdmin=true;$('loginModal').classList.remove('open');$('adminPanel').classList.add('show');$('adminBtn').textContent='Administración ✓';$('password').value='';render()}else alert('Contraseña incorrecta. Revisa ADMIN_PASSWORD en index.html.')});
-$('logoutBtn').onclick=()=>{isAdmin=false;$('adminPanel').classList.remove('show');$('adminBtn').textContent='Administrar';render()};
-$('cancelLogin').onclick=()=>$('loginModal').classList.remove('open');$('cancelModal').onclick=()=>$('productModal').classList.remove('open');$('addBtn').onclick=()=>openProduct(null);
-$('search').addEventListener('input',render);$('category').addEventListener('change',render);$('sort').addEventListener('change',render);
-$('shareBtn').onclick=async()=>{try{if(navigator.share)await navigator.share({title:'MC Importaciones',text:'Mira nuestro catálogo de productos',url:location.href});else{await navigator.clipboard.writeText(location.href);alert('Enlace del catálogo copiado.')}}catch(e){}};
-$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(products,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mc-importaciones-productos.json';a.click();URL.revokeObjectURL(a.href)};
-$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{const f=e.target.files[0];if(!f||!isAdmin)return;try{const data=JSON.parse(await f.text());if(!Array.isArray(data))throw Error();if(confirm('¿Reemplazar el catálogo actual con los productos del archivo?')){products=data;saveProducts();render()}}catch(err){alert('El archivo JSON no tiene un formato válido.')}e.target.value=''};
-$('qrBtn').onclick=()=>{const area=$('qrArea');area.classList.toggle('hidden');if(!area.classList.contains('hidden')){if(!location.href.startsWith('http'))alert('Este QR solo funcionará públicamente después de publicar la página en GitHub Pages.');$('qrcode').innerHTML='';new QRCode($('qrcode'),{text:location.href,width:140,height:140,correctLevel:QRCode.CorrectLevel.H})}};
-$('downloadQrBtn').onclick=()=>{const canvas=$('qrcode').querySelector('canvas');const img=$('qrcode').querySelector('img');const url=canvas?canvas.toDataURL('image/png'):img?.src;if(url){const a=document.createElement('a');a.href=url;a.download='QR-catalogo-MC-Importaciones.png';a.click()}};
-$('year').textContent=new Date().getFullYear();render();
+async function loadProducts(){
+ notice("Cargando productos…");
+ const {data,error}=await db.from("productos").select("id,nombre,descripcion,precio,categoria,imagen_url,codigo,disponible,created_at").eq("disponible",true).order("created_at",{ascending:false});
+ if(error){notice("No se pudieron cargar los productos: "+error.message,"err");return;}
+ products=data||[];render();notice(products.length+" producto(s) disponibles.","ok");
+}
+function renderAdminList(){
+ if(!$("adminPanel")||$("adminPanel").classList.contains("hidden"))return;
+ const {data}=db.auth.getSession();
+ $("adminList").innerHTML=products.length?products.map(p=>`<div class="adminitem"><span><strong>${escapeHtml(p.nombre)}</strong><br><span class="small">${money(p.precio)} · ${escapeHtml(p.categoria||"General")}</span></span><div class="row"><button class="secondary" onclick="editProduct(${Number(p.id)})">Editar</button><button onclick="deleteProduct(${Number(p.id)})">Eliminar</button></div></div>`).join(""):'<p class="small">Aún no hay productos disponibles. Puedes agregar el primero arriba.</p>';
+}
+window.editProduct=id=>{const p=products.find(x=>x.id===id);if(!p)return;$("pid").value=p.id;$("pname").value=p.nombre;$("pprice").value=p.precio;$("pcategory").value=p.categoria||"";$("pcode").value=p.codigo||"";$("pimage").value=p.imagen_url||"";$("pdesc").value=p.descripcion||"";$("pavailable").checked=p.disponible!==false;window.scrollTo({top:$("productForm").getBoundingClientRect().top+window.scrollY-20,behavior:"smooth"});};
+window.deleteProduct=async id=>{if(!confirm("¿Eliminar este producto?"))return;const {error}=await db.from("productos").delete().eq("id",id);if(error){alert("No se pudo eliminar: "+error.message);return;}await loadProducts();};
+function clearForm(){$("productForm").reset();$("pid").value="";$("pavailable").checked=true;}
+$("search").addEventListener("input",render);$("category").addEventListener("change",render);
+$("shareBtn").addEventListener("click",async()=>{if(navigator.share){try{await navigator.share({title:"MC Importaciones",text:"Consulta nuestro catálogo de productos",url:location.href});}catch(e){}}else{try{await navigator.clipboard.writeText(location.href);alert("Enlace del catálogo copiado.");}catch(e){prompt("Copia este enlace:",location.href);}}});
+$("loginForm").addEventListener("submit",async e=>{e.preventDefault();const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error){notice("No se pudo iniciar sesión: "+error.message,"err");return;}notice("Sesión iniciada.","ok");await updateAuthUI();});
+$("logoutBtn").addEventListener("click",async()=>{await db.auth.signOut();await updateAuthUI();});
+$("cancelEdit").addEventListener("click",clearForm);
+$("productForm").addEventListener("submit",async e=>{
+ e.preventDefault();const {data:{session}}=await db.auth.getSession();if(!session){alert("Inicia sesión primero.");return;}
+ const record={nombre:$("pname").value.trim(),precio:Number($("pprice").value),categoria:$("pcategory").value.trim()||"General",codigo:$("pcode").value.trim()||null,imagen_url:$("pimage").value.trim(),descripcion:$("pdesc").value.trim(),disponible:$("pavailable").checked,updated_at:new Date().toISOString()};
+ const id=$("pid").value;let result;
+ if(id) result=await db.from("productos").update(record).eq("id",Number(id));
+ else result=await db.from("productos").insert(record);
+ if(result.error){alert("No se pudo guardar: "+result.error.message);return;}
+ clearForm();await loadProducts();notice("Producto guardado correctamente.","ok");
+});
+async function updateAuthUI(){
+ const {data:{session}}=await db.auth.getSession();
+ $("loginPanel").classList.toggle("hidden",!!session);$("adminPanel").classList.toggle("hidden",!session);
+ if(session){$("email").value=session.user.email||"";await loadAdminProducts();}
+}
+async function loadAdminProducts(){
+ const {data,error}=await db.from("productos").select("*").order("created_at",{ascending:false});
+ if(error){notice("No se pudo cargar la administración: "+error.message,"err");return;}
+ // In admin, include unavailable products for editing.
+ products=data||[];render();notice("Administración conectada.","ok");
+}
+db.auth.onAuthStateChange((_event,session)=>{setTimeout(()=>updateAuthUI(),0);});
+loadProducts();updateAuthUI();
 </script>
-</body>
-</html>
+</body></html>
