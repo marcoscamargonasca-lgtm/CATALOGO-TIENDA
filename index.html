@@ -50,7 +50,14 @@ input,textarea,select,button{font:inherit;border-radius:10px;padding:11px 12px;b
       <label class="wide small"><input id="pavailable" type="checkbox" checked> Producto disponible</label>
       <div class="wide row"><button type="submit" class="gold">Guardar producto</button><button type="button" id="cancelEdit" class="secondary">Limpiar formulario</button></div>
     </form>
-    <h3>Productos registrados</h3><div id="adminList" class="adminlist"></div>
+    <h3>Productos registrados</h3>
+    <div class="row" style="margin:10px 0 14px">
+      <button type="button" id="exportBtn" class="secondary">Exportar datos (JSON)</button>
+      <button type="button" id="importBtn" class="secondary">Importar datos (JSON)</button>
+      <input id="importFile" type="file" accept=".json,application/json" class="hidden">
+    </div>
+    <p class="small">Exporta una copia de tus productos de Supabase o importa un archivo JSON de respaldo. La importación agrega productos nuevos y actualiza los que coincidan por ID; no elimina productos existentes.</p>
+    <div id="adminList" class="adminlist"></div>
   </div>
 </section>
 </main>
@@ -119,6 +126,52 @@ async function loadAdminProducts(){
  // In admin, include unavailable products for editing.
  products=data||[];render();notice("Administración conectada.","ok");
 }
+
+$("exportBtn").addEventListener("click",async()=>{
+ const {data:{session}}=await db.auth.getSession();
+ if(!session){alert("Inicia sesión primero.");return;}
+ const {data,error}=await db.from("productos").select("*").order("id",{ascending:true});
+ if(error){alert("No se pudieron exportar los datos: "+error.message);return;}
+ const payload={format:"mc-importaciones-productos-v1",exported_at:new Date().toISOString(),products:data||[]};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="mc-importaciones-productos-"+new Date().toISOString().slice(0,10)+".json";
+ document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+});
+$("importBtn").addEventListener("click",()=>{$("importFile").click();});
+$("importFile").addEventListener("change",async e=>{
+ const file=e.target.files&&e.target.files[0];if(!file)return;
+ const {data:{session}}=await db.auth.getSession();
+ if(!session){alert("Inicia sesión primero.");e.target.value="";return;}
+ try{
+  const raw=JSON.parse(await file.text());
+  const items=Array.isArray(raw)?raw:raw.products;
+  if(!Array.isArray(items))throw new Error("El archivo no contiene una lista de productos válida.");
+  if(!confirm("Se importarán "+items.length+" producto(s). Los productos con ID existente se actualizarán; los demás se agregarán. ¿Continuar?")){e.target.value="";return;}
+  let added=0,updated=0,skipped=0;
+  for(const p of items){
+   if(!p||typeof p.nombre!=="string"||!p.nombre.trim()||!Number.isFinite(Number(p.precio))){skipped++;continue;}
+   const record={nombre:p.nombre.trim(),descripcion:String(p.descripcion||""),precio:Number(p.precio),categoria:String(p.categoria||"General"),imagen_url:String(p.imagen_url||""),codigo:p.codigo?String(p.codigo):null,disponible:p.disponible!==false,updated_at:new Date().toISOString()};
+   let result;
+   if(p.id!==undefined&&p.id!==null&&String(p.id).trim()!==""){
+    result=await db.from("productos").update(record).eq("id",Number(p.id)).select("id");
+    if(!result.error&&(!result.data||result.data.length===0)){
+     result=await db.from("productos").insert(record).select("id");
+     if(!result.error)added++;
+    } else if(!result.error)updated++;
+   } else {
+    result=await db.from("productos").insert(record).select("id");
+    if(!result.error)added++;
+   }
+   if(result.error){skipped++;console.error(result.error);}
+  }
+  await loadAdminProducts();
+  notice("Importación finalizada: "+added+" agregado(s), "+updated+" actualizado(s), "+skipped+" omitido(s).",skipped?"err":"ok");
+  alert("Importación finalizada.\\nAgregados: "+added+"\\nActualizados: "+updated+"\\nOmitidos: "+skipped+(skipped?"\\nRevisa que no haya códigos duplicados y que los datos sean válidos.":""));
+ }catch(err){alert("No se pudo leer el archivo JSON: "+err.message);}
+ finally{e.target.value="";}
+});
+
 db.auth.onAuthStateChange((_event,session)=>{setTimeout(()=>updateAuthUI(),0);});
 loadProducts();updateAuthUI();
 </script>
