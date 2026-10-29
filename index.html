@@ -273,11 +273,11 @@ function render(){
  const filtered=products.filter(p=>(p.nombre+" "+(p.descripcion||"")+" "+(p.codigo||"")).toLowerCase().includes(term)&&(!cat||p.categoria===cat));
  $("products").innerHTML=filtered.length?filtered.map(p=>`<article class="product">
  <img src="${escapeHtml(p.imagen_url||"https://placehold.co/600x400?text=MC+Importaciones")}" alt="${escapeHtml(p.nombre)}" loading="lazy" onerror="this.src='https://placehold.co/600x400?text=Producto'">
- <div class="body"><span class="tag">${escapeHtml(p.categoria||"General")}</span><h3>${escapeHtml(p.nombre)}</h3><div class="desc">${escapeHtml(p.descripcion||"")}</div><div class="price">${money(p.precio)}</div><div class="qtyrow"><label for="qty-${escapeHtml(String(p.id))}">Cantidad</label><input id="qty-${escapeHtml(String(p.id))}" type="number" min="1" step="1" value="1" aria-label="Cantidad de ${escapeHtml(p.nombre)}"></div><button class="gold cart-add" type="button" data-cart-id="${escapeHtml(String(p.id))}">Agregar al carrito</button><a href="${waLink(p)}" target="_blank" rel="noopener"><button class="secondary" type="button" style="width:100%">Consultar por WhatsApp</button></a></div></article>).join(""):<p>No hay productos que coincidan con tu búsqueda.</p>`;
+ <div class="body"><span class="tag">${escapeHtml(p.categoria||"General")}</span><h3>${escapeHtml(p.nombre)}</h3><div class="desc">${escapeHtml(p.descripcion||"")}</div><div class="price">${money(p.precio)}</div><div class="qtyrow"><label for="qty-${escapeHtml(String(p.id))}">Cantidad</label><input id="qty-${escapeHtml(String(p.id))}" type="number" min="1" step="1" value="1" aria-label="Cantidad de ${escapeHtml(p.nombre)}"></div><button class="gold cart-add" type="button" data-cart-id="${escapeHtml(String(p.id))}">Agregar al carrito</button><a href="${waLink(p)}" target="_blank" rel="noopener"><button class="secondary" type="button" style="width:100%">Consultar por WhatsApp</button></a></div></article>`).join(""):'<p>No hay productos que coincidan con tu búsqueda.</p>';
  $("products").querySelectorAll("[data-cart-id]").forEach(btn=>{btn.addEventListener("click",()=>addToCart(btn.dataset.cartId));});
  const cats=[...new Set(products.map(p=>p.categoria||"General"))].sort();
  const old=$("category").value;
- $("category").innerHTML='<option value="">Todas las categorías</option>'+cats.map(c=><option value="${escapeHtml(c)}">${escapeHtml(c)}</option>).join("");
+ $("category").innerHTML='<option value="">Todas las categorías</option>'+cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
  if(cats.includes(old)) $("category").value=old;
  renderAdminList();
 }
@@ -290,7 +290,7 @@ async function loadProducts(){
 function renderAdminList(){
  if(!$("adminPanel")||$("adminPanel").classList.contains("hidden"))return;
  const {data}=db.auth.getSession();
- $("adminList").innerHTML=products.length?products.map(p=><div class="adminitem"><span><strong>${escapeHtml(p.nombre)}</strong><br><span class="small">${money(p.precio)} · ${escapeHtml(p.categoria||"General")}</span></span><div class="row"><button class="secondary" onclick="editProduct(${Number(p.id)})">Editar</button><button onclick="deleteProduct(${Number(p.id)})">Eliminar</button></div></div>).join(""):'<p class="small">Aún no hay productos disponibles. Puedes agregar el primero arriba.</p>';
+ $("adminList").innerHTML=products.length?products.map(p=>`<div class="adminitem"><span><strong>${escapeHtml(p.nombre)}</strong><br><span class="small">${money(p.precio)} · ${escapeHtml(p.categoria||"General")}</span></span><div class="row"><button class="secondary" onclick="editProduct(${Number(p.id)})">Editar</button><button onclick="deleteProduct(${Number(p.id)})">Eliminar</button></div></div>`).join(""):'<p class="small">Aún no hay productos disponibles. Puedes agregar el primero arriba.</p>';
 }
 window.editProduct=id=>{const p=products.find(x=>x.id===id);if(!p)return;$("pid").value=p.id;$("pname").value=p.nombre;$("pprice").value=p.precio;$("pcategory").value=p.categoria||"";$("pcode").value=p.codigo||"";$("pimage").value=p.imagen_url||"";$("pdesc").value=p.descripcion||"";$("pavailable").checked=p.disponible!==false;window.scrollTo({top:$("productForm").getBoundingClientRect().top+window.scrollY-20,behavior:"smooth"});};
 window.deleteProduct=async id=>{if(!confirm("¿Eliminar este producto?"))return;const {error}=await db.from("productos").delete().eq("id",id);if(error){alert("No se pudo eliminar: "+error.message);return;}await loadProducts();};
