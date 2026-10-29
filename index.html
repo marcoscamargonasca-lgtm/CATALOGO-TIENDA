@@ -59,15 +59,6 @@ input,textarea,select,button{font:inherit;border-radius:10px;padding:11px 12px;b
 .cart-actions{display:flex;gap:10px;flex-wrap:wrap}.cart-actions button{flex:1}
 @media(max-width:560px){.cart-line{grid-template-columns:1fr auto}.cart-line .line-total{grid-column:1}.cart-line .cart-qty{grid-column:2;grid-row:1/3}}
 
-
-/* Opciones de entrega compactas, ubicadas debajo del total del carrito */
-.mc-delivery-options{margin:10px 0 14px!important;padding:10px 12px!important;border:1px solid var(--line,#ddd)!important;border-radius:10px!important;background:#fafafa!important;color:#222;font-size:13px}
-.mc-delivery-options>strong{margin-bottom:6px!important;font-size:14px}
-.mc-delivery-options label{font-size:13px}
-.mc-delivery-options input[type="radio"]{margin:0 2px 0 0}
-.mc-delivery-options textarea,.mc-delivery-options select{font:inherit;padding:8px!important;border-radius:7px!important}
-.mc-delivery-options small{font-size:11px;line-height:1.35}
-
 </style>
 </head>
 <body>
@@ -76,10 +67,7 @@ input,textarea,select,button{font:inherit;border-radius:10px;padding:11px 12px;b
 <div class="toolbar">
   <input id="search" placeholder="Buscar producto..." aria-label="Buscar producto">
   <select id="category"><option value="">Todas las categorías</option></select>
-  
-
-
-<button class="gold" id="shareBtn">Compartir catálogo</button>
+  <button class="gold" id="shareBtn">Compartir catálogo</button>
 </div>
 <div id="notice" class="status">Conectando con el catálogo en línea…</div>
 <div id="products" class="grid"></div>
@@ -103,42 +91,6 @@ input,textarea,select,button{font:inherit;border-radius:10px;padding:11px 12px;b
   <h2>Tu pedido</h2>
   <div id="cartItems"><p class="small">Tu carrito está vacío. Agrega productos del catálogo.</p></div>
   <div class="cart-total" id="cartTotal">Total referencial: S/ 0.00</div>
-  <div id="mcDeliveryOptions" class="mc-delivery-options" style="margin:14px 0;padding:14px;border:1px solid #ddd;border-radius:12px;background:#fff;color:#222">
-  <strong style="display:block;margin-bottom:10px">Entrega del pedido</strong>
-  <label style="display:flex;gap:8px;align-items:center;margin:8px 0">
-    <input type="radio" name="mcDelivery" value="pickup" checked>
-    No, recogeré mi pedido
-  </label>
-  <label style="display:flex;gap:8px;align-items:center;margin:8px 0">
-    <input type="radio" name="mcDelivery" value="home">
-    Sí, quiero entrega a domicilio
-  </label>
-  <div id="mcAddressWrap" style="display:none;margin-top:10px">
-    <label for="mcDeliveryAddress" style="display:block;margin-bottom:6px">Dirección o referencia de entrega</label>
-    <textarea id="mcDeliveryAddress" rows="2" placeholder="Escribe tu dirección o una referencia" style="box-sizing:border-box;width:100%;padding:10px;border:1px solid #ccc;border-radius:8px"></textarea>
-    <label for="mcTip" style="display:block;margin:10px 0 6px">Propina opcional</label>
-    <select id="mcTip" style="width:100%;padding:10px;border:1px solid #ccc;border-radius:8px">
-      <option value="0">Sin propina — S/ 0.00</option>
-      <option value="0.5">S/ 0.50</option>
-      <option value="1">S/ 1.00</option>
-    </select>
-  </div>
-  <small style="display:block;margin-top:8px;color:#666">La entrega y el pedido se confirmarán manualmente por WhatsApp. No se añade una tarifa de entrega.</small>
-</div>
-<script>
-(function(){
-  function updateMcDelivery(){
-    const home = document.querySelector('input[name="mcDelivery"]:checked')?.value === "home";
-    const wrap = document.getElementById("mcAddressWrap");
-    if (wrap) wrap.style.display = home ? "block" : "none";
-  }
-  document.addEventListener("change", function(event){
-    if (event.target && event.target.name === "mcDelivery") updateMcDelivery();
-  });
-  document.addEventListener("DOMContentLoaded", updateMcDelivery);
-  updateMcDelivery();
-})();
-</script>
   <div class="cart-actions">
     <button type="button" class="gold" id="sendOrderBtn">Enviar boleta por imagen a WhatsApp</button>
     <button type="button" class="secondary" id="clearCartBtn">Vaciar carrito</button>
@@ -184,7 +136,7 @@ input,textarea,select,button{font:inherit;border-radius:10px;padding:11px 12px;b
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = "https://yypkkpofusxlztscyeea.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable__EaNAszeReluH4DMQzzNUA_z3nmpKe_";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_EaNAszeReluH4DMQzzNUA_z3nmpKe";
 const WHATSAPP_NUMBER = "51901148187"; // Cambia si deseas usar otro número, con código de país y sin +
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
@@ -296,80 +248,36 @@ function drawReceiptCanvas(items){
  ctx.font="15px Arial";ctx.fillText("MC Importaciones · Gracias por tu preferencia",width/2,y+105);
  return canvas;
 }
-function sendCartOrder() {
-  const items = (typeof cart !== "undefined" && Array.isArray(cart)) ? cart : [];
-  if (!items.length) {
-    alert("Tu carrito está vacío.");
-    return;
-  }
-
-  const subtotal = items.reduce((sum, item) => {
-    const qty = Number(item.quantity ?? item.qty ?? 1);
-    const price = Number(item.price ?? item.precio ?? 0);
-    return sum + qty * price;
-  }, 0);
-
-  const delivery = document.querySelector('input[name="mcDelivery"]:checked')?.value || "pickup";
-  const addressInput = document.getElementById("mcDeliveryAddress");
-  const address = (addressInput?.value || "").trim();
-  if (delivery === "home" && !address) {
-    alert("Ingresa la dirección o una referencia para la entrega.");
-    addressInput?.focus();
-    return;
-  }
-
-  const tipSelect = document.getElementById("mcTip");
-  const tip = delivery === "home" ? Number(tipSelect?.value || 0) : 0;
-  const total = subtotal + tip;
-  const money = value => "S/ " + Number(value).toFixed(2);
-  const lines = [
-    "          MC IMPORTACIONES",
-    "          RESUMEN DE PEDIDO",
-    "================================",
-    "PRODUCTOS",
-    ""
-  ];
-
-  items.forEach((item, index) => {
-    const name = String(item.name ?? item.nombre ?? item.title ?? "Producto");
-    const qty = Number(item.quantity ?? item.qty ?? 1);
-    const price = Number(item.price ?? item.precio ?? 0);
-    lines.push(`${index + 1}. ${name}`);
-    lines.push(`   ${qty} x ${money(price)} = ${money(qty * price)}`);
-    lines.push("");
-  });
-
-  lines.push("--------------------------------");
-  lines.push(`Subtotal: ${money(subtotal)}`);
-  lines.push(`Entrega a domicilio: ${delivery === "home" ? "SÍ" : "NO, recojo mi pedido"}`);
-  if (delivery === "home") {
-    lines.push(`Dirección: ${address}`);
-    lines.push(`Propina voluntaria: ${money(tip)}`);
-  } else {
-    lines.push("Dirección: No corresponde");
-    lines.push("Propina voluntaria: S/ 0.00");
-  }
-  lines.push("--------------------------------");
-  lines.push(`TOTAL REFERENCIAL: ${money(total)}`);
-  lines.push("Estado: Pendiente de confirmación");
-  lines.push("================================");
-  lines.push("Gracias por comprar en");
-  lines.push("MC IMPORTACIONES");
-
-  const message = lines.join("\n");
-  const url = "https://wa.me/51901148187?text=" + encodeURIComponent(message);
-  window.open(url, "_blank", "noopener,noreferrer");
+async function sendCartOrder(){
+ const items=Object.values(cart).filter(p=>Number(p.cantidad)>0);
+ if(!items.length){alert("Agrega al menos un producto al carrito.");return;}
+ const canvas=drawReceiptCanvas(items);
+ const fileName="Pedido_MC_Importaciones.png";
+ const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png"));
+ if(!blob){alert("No se pudo generar la imagen. Intenta nuevamente.");return;}
+ const file=new File([blob],fileName,{type:"image/png"});
+ const textMsg="Hola, MC Importaciones. Te envío la imagen con mi pedido para confirmar disponibilidad, precio final y entrega.";
+ if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+   try{await navigator.share({files:[file],title:"Pedido MC Importaciones",text:textMsg});return;}
+   catch(err){if(err && err.name==="AbortError")return;}
+ }
+ const objectUrl=URL.createObjectURL(blob);
+ const a=document.createElement("a");a.href=objectUrl;a.download=fileName;document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(objectUrl),60000);
+ const url="https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(textMsg+" Adjuntaré la imagen del pedido.");
+ window.open(url,"_blank","noopener");
+ alert("Se descargó la imagen del pedido. En WhatsApp, adjunta el archivo Pedido_MC_Importaciones.png antes de enviar el mensaje.");
 }
 function render(){
  const term=$("search").value.trim().toLowerCase(), cat=$("category").value;
  const filtered=products.filter(p=>(p.nombre+" "+(p.descripcion||"")+" "+(p.codigo||"")).toLowerCase().includes(term)&&(!cat||p.categoria===cat));
  $("products").innerHTML=filtered.length?filtered.map(p=>`<article class="product">
  <img src="${escapeHtml(p.imagen_url||"https://placehold.co/600x400?text=MC+Importaciones")}" alt="${escapeHtml(p.nombre)}" loading="lazy" onerror="this.src='https://placehold.co/600x400?text=Producto'">
- <div class="body"><span class="tag">${escapeHtml(p.categoria||"General")}</span><h3>${escapeHtml(p.nombre)}</h3><div class="desc">${escapeHtml(p.descripcion||"")}</div><div class="price">${money(p.precio)}</div><div class="qtyrow"><label for="qty-${escapeHtml(String(p.id))}">Cantidad</label><input id="qty-${escapeHtml(String(p.id))}" type="number" min="1" step="1" value="1" aria-label="Cantidad de ${escapeHtml(p.nombre)}"></div><button class="gold cart-add" type="button" data-cart-id="${escapeHtml(String(p.id))}">Agregar al carrito</button><a href="${waLink(p)}" target="_blank" rel="noopener"><button class="secondary" type="button" style="width:100%">Consultar por WhatsApp</button></a></div></article>`).join(""):`<p>No hay productos que coincidan con tu búsqueda.</p>`;
+ <div class="body"><span class="tag">${escapeHtml(p.categoria||"General")}</span><h3>${escapeHtml(p.nombre)}</h3><div class="desc">${escapeHtml(p.descripcion||"")}</div><div class="price">${money(p.precio)}</div><div class="qtyrow"><label for="qty-${escapeHtml(String(p.id))}">Cantidad</label><input id="qty-${escapeHtml(String(p.id))}" type="number" min="1" step="1" value="1" aria-label="Cantidad de ${escapeHtml(p.nombre)}"></div><button class="gold cart-add" type="button" data-cart-id="${escapeHtml(String(p.id))}">Agregar al carrito</button><a href="${waLink(p)}" target="_blank" rel="noopener"><button class="secondary" type="button" style="width:100%">Consultar por WhatsApp</button></a></div></article>).join(""):<p>No hay productos que coincidan con tu búsqueda.</p>`;
  $("products").querySelectorAll("[data-cart-id]").forEach(btn=>{btn.addEventListener("click",()=>addToCart(btn.dataset.cartId));});
  const cats=[...new Set(products.map(p=>p.categoria||"General"))].sort();
  const old=$("category").value;
- $("category").innerHTML='<option value="">Todas las categorías</option>'+cats.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+ $("category").innerHTML='<option value="">Todas las categorías</option>'+cats.map(c=><option value="${escapeHtml(c)}">${escapeHtml(c)}</option>).join("");
  if(cats.includes(old)) $("category").value=old;
  renderAdminList();
 }
@@ -382,7 +290,7 @@ async function loadProducts(){
 function renderAdminList(){
  if(!$("adminPanel")||$("adminPanel").classList.contains("hidden"))return;
  const {data}=db.auth.getSession();
- $("adminList").innerHTML=products.length?products.map(p=>`<div class="adminitem"><span><strong>${escapeHtml(p.nombre)}</strong><br><span class="small">${money(p.precio)} · ${escapeHtml(p.categoria||"General")}</span></span><div class="row"><button class="secondary" onclick="editProduct(${Number(p.id)})">Editar</button><button onclick="deleteProduct(${Number(p.id)})">Eliminar</button></div></div>`).join(""):'<p class="small">Aún no hay productos disponibles. Puedes agregar el primero arriba.</p>';
+ $("adminList").innerHTML=products.length?products.map(p=><div class="adminitem"><span><strong>${escapeHtml(p.nombre)}</strong><br><span class="small">${money(p.precio)} · ${escapeHtml(p.categoria||"General")}</span></span><div class="row"><button class="secondary" onclick="editProduct(${Number(p.id)})">Editar</button><button onclick="deleteProduct(${Number(p.id)})">Eliminar</button></div></div>).join(""):'<p class="small">Aún no hay productos disponibles. Puedes agregar el primero arriba.</p>';
 }
 window.editProduct=id=>{const p=products.find(x=>x.id===id);if(!p)return;$("pid").value=p.id;$("pname").value=p.nombre;$("pprice").value=p.precio;$("pcategory").value=p.categoria||"";$("pcode").value=p.codigo||"";$("pimage").value=p.imagen_url||"";$("pdesc").value=p.descripcion||"";$("pavailable").checked=p.disponible!==false;window.scrollTo({top:$("productForm").getBoundingClientRect().top+window.scrollY-20,behavior:"smooth"});};
 window.deleteProduct=async id=>{if(!confirm("¿Eliminar este producto?"))return;const {error}=await db.from("productos").delete().eq("id",id);if(error){alert("No se pudo eliminar: "+error.message);return;}await loadProducts();};
